@@ -24,19 +24,48 @@ $(document).ready(function(){
     })
 
     // Grab & store data-topic from the topic buttons:
-    $(".gifBtn").on("click",function(){
+    $(document).on("click",".gifBtn",function(){
+        $("#giphy-here").empty();
         var query = $(this).attr("data-topic");
-        var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=AktckZuloeaWMmGyQdCJI6s5gGFcnrLw&q=" + query + "&limit=10&offset=0&rating=G&lang=en";
+        var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q=" + query + "&limit=10&offset=0&rating=G&lang=en";
         $.ajax({
             url: queryURL,
             method: "GET"
         }).then(function(response){
             console.log(response);
+            var results = response.data;
+            for (var i = 0; i<results.length; i++){
+                var p = $("<p>").text("Rating: " + results[i].rating);
+                var newTopicImg = $("<img>");
+                newTopicImg.addClass("gifObject");
+                newTopicImg.attr("src", results[i].images.fixed_height.url);
+                newTopicImg.attr("data-state", "still");
+                newTopicImg.attr("data-still", results[i].images.fixed_height_still.url)
+                newTopicImg.attr("data-animate",results[i].images.fixed_height.url)
+                newTopicImg.append(p);
+                $("#giphy-here").prepend(newTopicImg);
+
+
+    $(".gifObject").on("click", function(){
+        var state = $(this).attr("data-state");
+        if (state === "still"){
+            console.log("it is going to animate", $(this).attr("data-animate"))
+            $(this).attr("src",$(this).attr("data-animate"));
+            $(this).attr("data-state","animate");
+        } else{
+            console.log("it is is going to still")
+            $(this).attr("src",$(this).attr("data-still"));
+            $(this).attr("data-state","still");
+        }
+
+    })
+                
+            }
         }) 
     })
 
-
-
+    // animated: results[i].images.fixed_height.url
+    // still: results[i].images.fixed_height_still.url
 
 
 
